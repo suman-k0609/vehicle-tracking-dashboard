@@ -87,73 +87,70 @@
 // }
 
 // export default App;
-return(
-  <div className="main-container">
+import { useState } from "react";
+import MapComponent from "./MapComponent";
+import Sidebar from "./Sidebar";
+import DetailsPanel from "./DetailsPanel";
+import "./index.css";   // important
 
-    {/* LEFT SIDEBAR */}
-    <div className="sidebar">
-      <Sidebar 
-        alerts={alerts}
-        connected={connected}
-        onAlertClick={setFocusCab}
-        filter={filter}
-        setFilter={setFilter}
-      />
-    </div>
+function App(){
 
-    {/* MAP AREA */}
-    <div className="map-container">
+  const [alerts,setAlerts] = useState([]);
+  const [selectedCab,setSelectedCab] = useState(null);
+  const [connected,setConnected] = useState(true);
+  const [focusCab,setFocusCab] = useState(null);
+  const [filter,setFilter] = useState("All");
+  const [toast,setToast] = useState(null);
 
-      {/* TITLE */}
-      <div style={{
-        position:"absolute",
-        top:"10px",
-        left:"50%",
-        transform:"translateX(-50%)",
-        background:"#0f172a",
-        color:"white",
-        padding:"10px 20px",
-        borderRadius:"8px",
-        fontWeight:"bold",
-        zIndex:999
-      }}>
-        🚖 Live Vehicle Tracking Dashboard
+  return(
+    <div className="main-container">
+
+      {/* LEFT SIDEBAR */}
+      <div className="sidebar">
+        <Sidebar 
+          alerts={alerts}
+          connected={connected}
+          onAlertClick={setFocusCab}
+          filter={filter}
+          setFilter={setFilter}
+        />
       </div>
 
-      <MapComponent 
-        setAlerts={setAlerts}
-        setSelectedCab={setSelectedCab}
-        setConnected={setConnected}
-        focusCab={focusCab}
-        filter={filter}
-        setToast={setToast}
-      />
-    </div>
+      {/* MAP AREA */}
+      <div className="map-container">
 
-    {/* RIGHT PANEL */}
-    {selectedCab && (
-      <DetailsPanel 
-        cab={selectedCab} 
-        setSelectedCab={setSelectedCab}
-      />
-    )}
+        {/* TITLE */}
+        <div className="title">
+          🚖 Live Vehicle Tracking Dashboard
+        </div>
 
-    {/* TOAST */}
-    {toast && (
-      <div style={{
-        position:"fixed",
-        top:"20px",
-        right:"30px",
-        background:"#111827",
-        color:"white",
-        padding:"14px 20px",
-        borderLeft:"5px solid #22c55e",
-        borderRadius:"8px",
-        zIndex:9999
-      }}>
-        🚨 {toast}
+        <MapComponent 
+          setAlerts={setAlerts}
+          setSelectedCab={setSelectedCab}
+          setConnected={setConnected}
+          focusCab={focusCab}
+          filter={filter}
+          setToast={setToast}
+        />
       </div>
-    )}
 
-  </div>
-)
+      {/* RIGHT PANEL */}
+      {selectedCab && (
+        <DetailsPanel 
+          cab={selectedCab} 
+          setSelectedCab={setSelectedCab}
+        />
+      )}
+
+      {/* TOAST */}
+      {toast && (
+        <div className="toast">
+          🚨 {toast}
+        </div>
+      )}
+
+    </div>
+  )
+}
+
+export default App;
