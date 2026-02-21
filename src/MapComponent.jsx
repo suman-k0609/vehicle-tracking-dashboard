@@ -161,7 +161,7 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
     }
   },[focusCab]);
 
-  return <div ref={mapRef} style={{height:"100vh",width:"100%"}}/>;
+  return <div ref={mapRef} className="map-container"></div>;
 }
 
 export default MapComponent;
