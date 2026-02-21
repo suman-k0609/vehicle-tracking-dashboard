@@ -91,38 +91,32 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
         const d=map.distance([o.data.lat,o.data.lng],office);
 
         // 🔵 INSIDE OFFICE
-        if(d<radius){
+        if(d < radius){
 
-          if(o.data.status!=="Inside Office"){   // ⭐ trigger only once
+  // ⭐ only when entering first time
+  if(o.data.status !== "Inside Office"){
 
-            blinkGeofence(o.data.id);
+    blinkGeofence(o.data.id);
 
-            setToast(`Vehicle ${o.data.id} entered office geofence`);
-            setTimeout(()=>setToast(null),3000);
+    setToast(`Vehicle ${o.data.id} entered office geofence`);
+    setTimeout(()=>setToast(null),3000);
 
-            setAlerts(prev=>[
-              {id:o.data.id,msg:"Entered office"},
-              ...prev.slice(0,4)
-            ]);
-          }
+    setAlerts(prev=>{
+      // avoid duplicate alert
+      const already = prev.find(a=>a.id===o.data.id && a.msg==="Entered office");
+      if(already) return prev;
 
-          o.data.status="Inside Office";
-          o.marker.setIcon(blue);
-          o.marker.setPopupContent(o.data.id+" 🔵 Inside Office");
-        }
+      return [
+        {id:o.data.id,msg:"Entered office"},
+        ...prev.slice(0,4)
+      ];
+    });
+  }
 
-        // 🔴 ALERT
-        else if(Math.random()<0.05){
-          o.data.status="Alert";
-          o.marker.setIcon(red);
-          o.marker.setPopupContent(o.data.id+" 🔴 Alert");
-
-          setAlerts(prev=>[
-            {id:o.data.id,msg:"Speeding"},
-            ...prev.slice(0,4)
-          ]);
-        }
-
+  o.data.status="Inside Office";
+  o.marker.setIcon(blue);
+  o.marker.setPopupContent(o.data.id+" 🔵 Inside Office");
+}
         // 🟢 MOVING
         else{
           o.data.status="Moving";
@@ -161,7 +155,7 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
     }
   },[focusCab]);
 
-  return <div ref={mapRef} className="map-container"></div>;
+ return <div ref={mapRef} style={{height:"100%",width:"100%"}}/>
 }
 
 export default MapComponent;
