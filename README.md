@@ -1,107 +1,113 @@
-# 🚖 Live Vehicle Tracking Dashboard
+🚖 Live Vehicle Tracking Dashboard
+A real-time vehicle tracking dashboard built using React + Leaflet as part of my Software UI Intern case study for MoveInSync.
+This project simulates enterprise cab tracking with geofence monitoring, live alerts, route visualization, and an interactive command-center UI to demonstrate modern frontend engineering and real-time dashboard design skills.
+📌 Project Overview
+This application provides a live command center view to monitor multiple vehicles in real time.
+It visualizes:
+Live vehicle movement
+Office geofence entry detection
+Real-time alerts
+Trip route tracking
+Interactive filtering & vehicle monitoring
+The dashboard is designed similar to real-world corporate transport tracking systems used by operations teams.
+🎯 Objective
+To design and implement a real-time vehicle tracking UI that allows operations teams to:
+Track multiple vehicles on a live map
+Monitor geofence entry events
+View trip status and alerts
+Filter vehicles by activity/status
+Interact with vehicles and routes
+✨ Key Features
+🔄 Smooth live vehicle movement simulation
+📍 Office geofence visualization
+🔔 Real-time alerts (Entered Office & Speeding)
+🛣 Route tracking with path history
+🎯 Filter vehicles:
+All vehicles
+Moving vehicles
+Inside Office
+Alert vehicles
+📊 Click vehicle to view details panel
+💬 Toast notification when vehicle enters office
+🌐 Connection status simulation
+📱 Fully responsive design
+🎨 Clean command-center UI layout
+📱 Responsive Design
+Fully responsive across all devices:
+Desktop
+Sidebar + Map + Details panel
+Command center layout
+Tablet
+Flexible layout adjustment
+Mobile
+Horizontal alerts bar
+Full-width map view
+Optimized touch UI
+Ensures smooth tracking experience on all screen sizes.
+🛠 Tech Stack
+React.js
+Leaflet.js (Map & geofence rendering)
+JavaScript (ES6)
+CSS
+Vite
+Vercel (Deployment)
+🧠 Architecture & Concepts Used
+UI & Component Architecture
+Functional components with React Hooks
+Modular component-based design
+Separation of UI and logic
+Reusable components
+State Management
+useState for UI state
+Real-time vehicle state updates
+Filter-based rendering
+Real-Time Simulation
+Live vehicle movement using setInterval
+Dynamic marker updates
+Real-time alert generation
+Map & Geofence
+Leaflet map integration
+Office geofence circle
+Marker movement with route polyline
+Popup with vehicle details
+Performance & UX
+Smooth marker movement
+Controlled re-renders
+Clean UI layout
+Responsive design
+🚀 Run Project Locally
+Bash
 
-A real-time vehicle tracking dashboard built using **React + Leaflet** as part of my Software UI Intern case study.
-
-This project simulates live vehicle tracking with geofence alerts, route tracking, and an interactive command center UI to demonstrate modern frontend and real-time dashboard development skills.
-
----
-
-## 📌 Project Overview
-
-This dashboard displays live movement of multiple vehicles on an interactive map.  
-It detects when vehicles enter an office geofence area and generates real-time alerts for operations monitoring.
-
-The project demonstrates my skills in:
-- React UI development  
-- Real-time event simulation  
-- Interactive dashboard design  
-- State management and component architecture  
-- Responsive web design  
-
----
-
-## ✨ Key Features
-
-- 🔄 Live vehicle movement simulation  
-- 📍 Office geofence monitoring  
-- 🔔 Real-time alerts (Entered Office & Speeding)  
-- 🛣 Route tracking with polyline history  
-- 🎯 Filter vehicles (All / Inside Office / Alert)  
-- 📊 Click vehicle → view details panel  
-- 💬 Toast notification on geofence entry  
-- 🌐 Connection status simulation  
-- 📱 Fully responsive (Mobile + Tablet + Desktop)  
-- 🎨 Clean and professional UI layout  
-
----
-
-## 📱 Responsive Design
-
-The dashboard is fully responsive across all screen sizes:
-
-- Desktop: Sidebar + Map + Details panel layout  
-- Tablet: Adjusted flexible layout  
-- Mobile: Horizontal alert bar + full-width map view  
-
-Ensures smooth tracking experience on phone, tablet, and desktop devices.
-
----
-
-## 🛠 Tech Stack
-
-- React.js  
-- Leaflet.js (Map integration)  
-- JavaScript (ES6)  
-- CSS  
-- Vite  
-
----
-
-## 🧠 Architecture & Concepts Used
-
-- Functional components with React Hooks  
-- Component-based modular UI  
-- Real-time simulation using `setInterval`  
-- State management using `useState`  
-- Dynamic UI updates based on vehicle status  
-- Map rendering and geofence visualization  
-
----
-
-## 🚀 Run Project Locally
-
-```bash
 npm install
 npm run dev
-```
-
-Open in browser:  
-`http://localhost:5173`
-
----
-## 🌍 Live Demo
-
-🔗 Deployed Link: https://vehicle-tracking-dashboard.vercel.app/
-
-## 📹 Demo Video
-
-(https://drive.google.com/file/d/1b8C14krfUWfHZ8OCWHsHZBVTvDrchFu-/view)
-
----
-
-## 🔮 Future Improvements
-
-- Real-time backend integration using WebSocket  
-- Database for trip history  
-- Authentication system  
-- Dark mode UI  
-- Historical trip playback  
-- Advanced filtering and analytics  
-
----
-
-## 👩‍💻 Developed By
-
-**Suman Kumari**  
-B.Tech CSE Student  
+Open browser:
+http://localhost:5173�
+🌍 Live Demo
+🔗 Deployed Project:
+https://vehicle-tracking-dashboard.vercel.app/�
+📹 Demo Video Walkthrough
+🎥 Project Demo Video:
+https://drive.google.com/file/d/1b8C14krfUWfHZ8OCWHsHZBVTvDrchFu-/view�
+🧪 How to Use
+Open dashboard
+Watch vehicles move in real time
+Use filter dropdown:
+All → shows all vehicles
+Moving → only moving vehicles
+Inside Office → vehicles inside geofence
+Alert → speeding vehicles
+Click any vehicle to view details
+Click alert to focus vehicle on map
+🔮 Future Improvements
+Real-time backend integration (WebSocket)
+Database for trip history
+Authentication system
+Dark mode UI
+Historical trip playback
+Advanced analytics dashboard
+Multiple office geofences
+Driver & employee pickup tracking
+👩‍💻 Developed By
+Suman Kumari
+B.Tech Computer Science Engineering
 Software UI Intern Candidate
