@@ -1,3 +1,176 @@
+// // // import { useEffect, useRef } from "react";
+// // // import L from "leaflet";
+// // // import "leaflet/dist/leaflet.css";
+
+// // // function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filter, setToast }) {
+
+// // //   const mapRef = useRef(null);
+// // //   const markerRefs = useRef({});
+// // //   const mapInstance = useRef(null);
+
+// // //   useEffect(()=>{
+
+// // //     const map = L.map(mapRef.current).setView([28.61,77.20],12);
+// // //     mapInstance.current = map;
+
+// // //     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+// // //       attribution:"© OpenStreetMap"
+// // //     }).addTo(map);
+
+// // //     // 📍 Office geofence
+// // //     const office=[28.61,77.20];
+// // //     const radius=2000;
+
+// // //     const officeCircle = L.circle(office,{
+// // //       radius:radius,
+// // //       color:"blue",
+// // //       fillOpacity:0.2,
+// // //       weight:3
+// // //     }).addTo(map);
+
+// // //     // ⭐ blink effect
+// // //     let lastBlink = {};
+// // //     function blinkGeofence(id){
+// // //       if(lastBlink[id]) return;
+// // //       lastBlink[id] = true;
+
+// // //       officeCircle.setStyle({color:"red", weight:5});
+// // //       setTimeout(()=>{
+// // //         officeCircle.setStyle({color:"blue", weight:3});
+// // //         lastBlink[id] = false;
+// // //       },1000);
+// // //     }
+
+// // //     // icons
+// // //     const green=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/green-dot.png",iconSize:[32,32]});
+// // //     const blue=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png",iconSize:[32,32]});
+// // //     const red=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/red-dot.png",iconSize:[32,32]});
+
+// // //     // vehicles
+// // //     const vehicles=[
+// // //       {id:"CAB101",lat:28.61,lng:77.20,status:"Moving"},
+// // //       {id:"CAB102",lat:28.63,lng:77.18,status:"Moving"},
+// // //       {id:"CAB103",lat:28.59,lng:77.22,status:"Moving"},
+// // //       {id:"CAB104",lat:28.62,lng:77.25,status:"Moving"},
+// // //       {id:"CAB105",lat:28.58,lng:77.19,status:"Moving"}
+// // //     ];
+
+// // //     // markers
+// // //     const objs = vehicles.map(v=>{
+// // //       const marker=L.marker([v.lat,v.lng],{icon:green}).addTo(map).bindPopup(v.id+" 🟢 Moving");
+// // //       markerRefs.current[v.id]=marker;
+
+// // //       marker.on("click",()=> setSelectedCab({...v}));
+
+// // //       const route=L.polyline([[v.lat,v.lng]],{color:"yellow"}).addTo(map);
+// // //       return {data:v,marker,route};
+// // //     });
+
+// // //     // 🔴 fake connection
+// // //     const connectionInterval=setInterval(()=>{
+// // //       if(Math.random()<0.1){
+// // //         setConnected(false);
+// // //         setTimeout(()=>setConnected(true),2000);
+// // //       }
+// // //     },5000);
+
+// // //     // 🚀 movement loop
+// // //     const interval=setInterval(()=>{
+// // //       objs.forEach(o=>{
+
+// // //         o.data.lat+=(Math.random()-0.5)*0.01;
+// // //         o.data.lng+=(Math.random()-0.5)*0.01;
+
+// // //         o.marker.setLatLng([o.data.lat,o.data.lng]);
+// // //         o.route.addLatLng([o.data.lat,o.data.lng]);
+
+// // //         const d=map.distance([o.data.lat,o.data.lng],office);
+
+// // //         // 🔵 ENTER OFFICE
+// // //         if(d < radius){
+
+// // //           if(o.data.status !== "Inside Office"){
+
+// // //             blinkGeofence(o.data.id);
+
+// // //             setToast(`Vehicle ${o.data.id} entered office`);
+// // //             setTimeout(()=>setToast(null),3000);
+
+// // //             setAlerts(prev=>{
+// // //               const exist = prev.find(a=>a.id===o.data.id && a.msg==="Entered office");
+// // //               if(exist) return prev;
+
+// // //               return [
+// // //                 {id:o.data.id,msg:"Entered office"},
+// // //                 ...prev.slice(0,4)
+// // //               ];
+// // //             });
+// // //           }
+
+// // //           o.data.status="Inside Office";
+// // //           o.marker.setIcon(blue);
+// // //           o.marker.setPopupContent(o.data.id+" 🔵 Inside Office");
+// // //         }
+
+// // //         // 🔴 SPEEDING ALERT
+// // //         else if(Math.random()<0.08){
+
+// // //           o.data.status="Alert";
+// // //           o.marker.setIcon(red);
+// // //           o.marker.setPopupContent(o.data.id+" 🔴 Speeding");
+
+// // //           setToast(`⚠ ${o.data.id} speeding`);
+// // //           setTimeout(()=>setToast(null),2000);
+
+// // //           setAlerts(prev=>[
+// // //             {id:o.data.id,msg:"Speeding"},
+// // //             ...prev.slice(0,4)
+// // //           ]);
+// // //         }
+
+// // //         // 🟢 MOVING
+// // //         else{
+// // //           o.data.status="Moving";
+// // //           o.marker.setIcon(green);
+// // //           o.marker.setPopupContent(o.data.id+" 🟢 Moving");
+// // //         }
+
+// // //         // 🎯 FILTER
+// // //         if(filter!=="All" && o.data.status!==filter){
+// // //           o.marker.setOpacity(0);
+// // //           o.route.setStyle({opacity:0});
+// // //         }else{
+// // //           o.marker.setOpacity(1);
+// // //           o.route.setStyle({opacity:1});
+// // //         }
+
+// // //       });
+// // //     },2000);
+
+// // //     setTimeout(()=>map.invalidateSize(),500);
+
+// // //     return ()=>{
+// // //       clearInterval(interval);
+// // //       clearInterval(connectionInterval);
+// // //       map.remove();
+// // //     }
+
+// // //   },[filter]);
+
+// // //   // 🎯 click alert zoom
+// // //   useEffect(()=>{
+// // //     if(focusCab && markerRefs.current[focusCab.id]){
+// // //       const m=markerRefs.current[focusCab.id];
+// // //       mapInstance.current.flyTo(m.getLatLng(),15);
+// // //       m.openPopup();
+// // //     }
+// // //   },[focusCab]);
+
+// // //   return <div ref={mapRef} style={{height:"100%",width:"100%"}}/>;
+// // // }
+
+// // // export default MapComponent;
+
 // // import { useEffect, useRef } from "react";
 // // import L from "leaflet";
 // // import "leaflet/dist/leaflet.css";
@@ -41,6 +214,26 @@
 // //       },1000);
 // //     }
 
+// //     // ⭐ SMOOTH MOVE FUNCTION
+// //     function smoothMove(marker,newLat,newLng){
+// //       const start = marker.getLatLng();
+// //       const steps = 20;
+// //       let i=0;
+
+// //       const deltaLat=(newLat-start.lat)/steps;
+// //       const deltaLng=(newLng-start.lng)/steps;
+
+// //       const move=setInterval(()=>{
+// //         i++;
+// //         marker.setLatLng([
+// //           start.lat + deltaLat*i,
+// //           start.lng + deltaLng*i
+// //         ]);
+
+// //         if(i>=steps) clearInterval(move);
+// //       },50);
+// //     }
+
 // //     // icons
 // //     const green=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/green-dot.png",iconSize:[32,32]});
 // //     const blue=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png",iconSize:[32,32]});
@@ -57,9 +250,11 @@
 
 // //     // markers
 // //     const objs = vehicles.map(v=>{
-// //       const marker=L.marker([v.lat,v.lng],{icon:green}).addTo(map).bindPopup(v.id+" 🟢 Moving");
-// //       markerRefs.current[v.id]=marker;
+// //       const marker=L.marker([v.lat,v.lng],{icon:green})
+// //         .addTo(map)
+// //         .bindPopup(v.id+" 🟢 Moving");
 
+// //       markerRefs.current[v.id]=marker;
 // //       marker.on("click",()=> setSelectedCab({...v}));
 
 // //       const route=L.polyline([[v.lat,v.lng]],{color:"yellow"}).addTo(map);
@@ -78,10 +273,12 @@
 // //     const interval=setInterval(()=>{
 // //       objs.forEach(o=>{
 
+// //         // new location
 // //         o.data.lat+=(Math.random()-0.5)*0.01;
 // //         o.data.lng+=(Math.random()-0.5)*0.01;
 
-// //         o.marker.setLatLng([o.data.lat,o.data.lng]);
+// //         // ⭐ smooth movement
+// //         smoothMove(o.marker,o.data.lat,o.data.lng);
 // //         o.route.addLatLng([o.data.lat,o.data.lng]);
 
 // //         const d=map.distance([o.data.lat,o.data.lng],office);
@@ -112,20 +309,23 @@
 // //           o.marker.setPopupContent(o.data.id+" 🔵 Inside Office");
 // //         }
 
-// //         // 🔴 SPEEDING ALERT
+// //         // 🔴 SPEEDING ALERT (ONLY RED ALERT)
 // //         else if(Math.random()<0.08){
+
+// //           if(o.data.status !== "Alert"){
+
+// //             setToast(`⚠ ${o.data.id} speeding`);
+// //             setTimeout(()=>setToast(null),2000);
+
+// //             setAlerts(prev=>[
+// //               {id:o.data.id,msg:"Speeding"},
+// //               ...prev.slice(0,4)
+// //             ]);
+// //           }
 
 // //           o.data.status="Alert";
 // //           o.marker.setIcon(red);
 // //           o.marker.setPopupContent(o.data.id+" 🔴 Speeding");
-
-// //           setToast(`⚠ ${o.data.id} speeding`);
-// //           setTimeout(()=>setToast(null),2000);
-
-// //           setAlerts(prev=>[
-// //             {id:o.data.id,msg:"Speeding"},
-// //             ...prev.slice(0,4)
-// //           ]);
 // //         }
 
 // //         // 🟢 MOVING
@@ -170,7 +370,6 @@
 // // }
 
 // // export default MapComponent;
-
 // import { useEffect, useRef } from "react";
 // import L from "leaflet";
 // import "leaflet/dist/leaflet.css";
@@ -181,192 +380,223 @@
 //   const markerRefs = useRef({});
 //   const mapInstance = useRef(null);
 
-//   useEffect(()=>{
+//   useEffect(() => {
 
-//     const map = L.map(mapRef.current).setView([28.61,77.20],12);
+//     const map = L.map(mapRef.current).setView([28.61, 77.20], 12);
 //     mapInstance.current = map;
 
-//     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-//       attribution:"© OpenStreetMap"
+//     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+//       attribution: "© OpenStreetMap"
 //     }).addTo(map);
 
-//     // 📍 Office geofence
-//     const office=[28.61,77.20];
-//     const radius=2000;
+//     // 📍 Office Geofence
+//     const office = [28.61, 77.20];
+//     const radius = 2000;
 
-//     const officeCircle = L.circle(office,{
-//       radius:radius,
-//       color:"blue",
-//       fillOpacity:0.2,
-//       weight:3
+//     const officeCircle = L.circle(office, {
+//       radius: radius,
+//       color: "blue",
+//       fillOpacity: 0.2,
+//       weight: 3
 //     }).addTo(map);
 
-//     // ⭐ blink effect
-//     let lastBlink = {};
-//     function blinkGeofence(id){
-//       if(lastBlink[id]) return;
-//       lastBlink[id] = true;
-
-//       officeCircle.setStyle({color:"red", weight:5});
-//       setTimeout(()=>{
-//         officeCircle.setStyle({color:"blue", weight:3});
-//         lastBlink[id] = false;
-//       },1000);
+//     function blinkGeofence() {
+//       officeCircle.setStyle({ color: "red", weight: 5 });
+//       setTimeout(() => {
+//         officeCircle.setStyle({ color: "blue", weight: 3 });
+//       }, 1000);
 //     }
 
-//     // ⭐ SMOOTH MOVE FUNCTION
-//     function smoothMove(marker,newLat,newLng){
+//     // 🚗 Smooth movement
+//     function smoothMove(marker, newLat, newLng) {
 //       const start = marker.getLatLng();
-//       const steps = 20;
-//       let i=0;
+//       const steps = 25;
+//       let i = 0;
 
-//       const deltaLat=(newLat-start.lat)/steps;
-//       const deltaLng=(newLng-start.lng)/steps;
+//       const dLat = (newLat - start.lat) / steps;
+//       const dLng = (newLng - start.lng) / steps;
 
-//       const move=setInterval(()=>{
+//       const move = setInterval(() => {
 //         i++;
 //         marker.setLatLng([
-//           start.lat + deltaLat*i,
-//           start.lng + deltaLng*i
+//           start.lat + dLat * i,
+//           start.lng + dLng * i
 //         ]);
-
-//         if(i>=steps) clearInterval(move);
-//       },50);
+//         if (i >= steps) clearInterval(move);
+//       }, 60);
 //     }
 
 //     // icons
-//     const green=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/green-dot.png",iconSize:[32,32]});
-//     const blue=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png",iconSize:[32,32]});
-//     const red=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/red-dot.png",iconSize:[32,32]});
+//     const green = new L.Icon({
+//       iconUrl: "https://maps.google.com/mapfiles/ms/icons/green-dot.png",
+//       iconSize: [32, 32]
+//     });
 
-//     // vehicles
-//     const vehicles=[
-//       {id:"CAB101",lat:28.61,lng:77.20,status:"Moving"},
-//       {id:"CAB102",lat:28.63,lng:77.18,status:"Moving"},
-//       {id:"CAB103",lat:28.59,lng:77.22,status:"Moving"},
-//       {id:"CAB104",lat:28.62,lng:77.25,status:"Moving"},
-//       {id:"CAB105",lat:28.58,lng:77.19,status:"Moving"}
+//     const blue = new L.Icon({
+//       iconUrl: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+//       iconSize: [32, 32]
+//     });
+
+//     const red = new L.Icon({
+//       iconUrl: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+//       iconSize: [32, 32]
+//     });
+
+//     // 🚕 5 vehicles source → office
+//     const vehicles = [
+//       { id: "CAB101", lat: 28.50, lng: 77.10, destLat: 28.61, destLng: 77.20, status: "Moving" },
+//       { id: "CAB102", lat: 28.70, lng: 77.35, destLat: 28.61, destLng: 77.20, status: "Moving" },
+//       { id: "CAB103", lat: 28.55, lng: 77.30, destLat: 28.61, destLng: 77.20, status: "Moving" },
+//       { id: "CAB104", lat: 28.68, lng: 77.05, destLat: 28.61, destLng: 77.20, status: "Moving" },
+//       { id: "CAB105", lat: 28.58, lng: 77.40, destLat: 28.61, destLng: 77.20, status: "Moving" }
 //     ];
 
-//     // markers
-//     const objs = vehicles.map(v=>{
-//       const marker=L.marker([v.lat,v.lng],{icon:green})
+//     const objs = vehicles.map(v => {
+
+//       const marker = L.marker([v.lat, v.lng], { icon: green })
 //         .addTo(map)
-//         .bindPopup(v.id+" 🟢 Moving");
+//         .bindPopup(v.id + " 🟢 Moving");
 
-//       markerRefs.current[v.id]=marker;
-//       marker.on("click",()=> setSelectedCab({...v}));
+//       markerRefs.current[v.id] = marker;
 
-//       const route=L.polyline([[v.lat,v.lng]],{color:"yellow"}).addTo(map);
-//       return {data:v,marker,route};
+//       marker.on("click", () => setSelectedCab({ ...v }));
+
+//       const route = L.polyline([[v.lat, v.lng]], {
+//         color: "yellow",
+//         weight: 4
+//       }).addTo(map);
+
+//       return { data: v, marker, route };
 //     });
 
 //     // 🔴 fake connection
-//     const connectionInterval=setInterval(()=>{
-//       if(Math.random()<0.1){
+//     const connectionInterval = setInterval(() => {
+//       if (Math.random() < 0.1) {
 //         setConnected(false);
-//         setTimeout(()=>setConnected(true),2000);
+//         setTimeout(() => setConnected(true), 2000);
 //       }
-//     },5000);
+//     }, 5000);
 
 //     // 🚀 movement loop
-//     const interval=setInterval(()=>{
-//       objs.forEach(o=>{
+//     const interval = setInterval(() => {
 
-//         // new location
-//         o.data.lat+=(Math.random()-0.5)*0.01;
-//         o.data.lng+=(Math.random()-0.5)*0.01;
+//       objs.forEach(o => {
 
-//         // ⭐ smooth movement
-//         smoothMove(o.marker,o.data.lat,o.data.lng);
-//         o.route.addLatLng([o.data.lat,o.data.lng]);
+//         const step = 0.002;
 
-//         const d=map.distance([o.data.lat,o.data.lng],office);
+//         // move toward destination
+//         if (o.data.lat < o.data.destLat) o.data.lat += step;
+//         if (o.data.lat > o.data.destLat) o.data.lat -= step;
 
-//         // 🔵 ENTER OFFICE
-//         if(d < radius){
+//         if (o.data.lng < o.data.destLng) o.data.lng += step;
+//         if (o.data.lng > o.data.destLng) o.data.lng -= step;
 
-//           if(o.data.status !== "Inside Office"){
+//         smoothMove(o.marker, o.data.lat, o.data.lng);
+//         o.route.addLatLng([o.data.lat, o.data.lng]);
 
-//             blinkGeofence(o.data.id);
+//         const d = map.distance([o.data.lat, o.data.lng], office);
+
+//         // 🔵 Inside office
+//         if (d < radius) {
+
+//           if (o.data.status !== "Inside Office") {
+
+//             blinkGeofence();
 
 //             setToast(`Vehicle ${o.data.id} entered office`);
-//             setTimeout(()=>setToast(null),3000);
+//             setTimeout(() => setToast(null), 3000);
 
-//             setAlerts(prev=>{
-//               const exist = prev.find(a=>a.id===o.data.id && a.msg==="Entered office");
-//               if(exist) return prev;
-
-//               return [
-//                 {id:o.data.id,msg:"Entered office"},
-//                 ...prev.slice(0,4)
-//               ];
-//             });
-//           }
-
-//           o.data.status="Inside Office";
-//           o.marker.setIcon(blue);
-//           o.marker.setPopupContent(o.data.id+" 🔵 Inside Office");
-//         }
-
-//         // 🔴 SPEEDING ALERT (ONLY RED ALERT)
-//         else if(Math.random()<0.08){
-
-//           if(o.data.status !== "Alert"){
-
-//             setToast(`⚠ ${o.data.id} speeding`);
-//             setTimeout(()=>setToast(null),2000);
-
-//             setAlerts(prev=>[
-//               {id:o.data.id,msg:"Speeding"},
-//               ...prev.slice(0,4)
+//             setAlerts(prev => [
+//               { id: o.data.id, msg: "Entered office" },
+//               ...prev.slice(0, 4)
 //             ]);
 //           }
 
-//           o.data.status="Alert";
+//           o.data.status = "Inside Office";
+//           o.marker.setIcon(blue);
+//           o.marker.setPopupContent(o.data.id + " 🔵 Inside Office");
+//         }
+
+//         // 🔴 Speeding
+//         else if (Math.random() < 0.05) {
+
+//           o.data.status = "Alert";
 //           o.marker.setIcon(red);
-//           o.marker.setPopupContent(o.data.id+" 🔴 Speeding");
+//           o.marker.setPopupContent(o.data.id + " 🔴 Speeding");
+
+//           setAlerts(prev => [
+//             { id: o.data.id, msg: "Speeding" },
+//             ...prev.slice(0, 4)
+//           ]);
 //         }
 
-//         // 🟢 MOVING
-//         else{
-//           o.data.status="Moving";
+//         // 🟢 Moving
+//         else {
+//           o.data.status = "Moving";
 //           o.marker.setIcon(green);
-//           o.marker.setPopupContent(o.data.id+" 🟢 Moving");
+//           o.marker.setPopupContent(o.data.id + " 🟢 Moving");
 //         }
 
-//         // 🎯 FILTER
-//         if(filter!=="All" && o.data.status!==filter){
-//           o.marker.setOpacity(0);
-//           o.route.setStyle({opacity:0});
-//         }else{
+//         // 🎯 FILTER SYSTEM
+//         if (filter === "All") {
 //           o.marker.setOpacity(1);
-//           o.route.setStyle({opacity:1});
+//           o.route.setStyle({ opacity: 1 });
+//         }
+
+//         else if (filter === "Moving") {
+//           if (o.data.status === "Moving") {
+//             o.marker.setOpacity(1);
+//             o.route.setStyle({ opacity: 1 });
+//           } else {
+//             o.marker.setOpacity(0);
+//             o.route.setStyle({ opacity: 0 });
+//           }
+//         }
+
+//         else if (filter === "Inside Office") {
+//           if (o.data.status === "Inside Office") {
+//             o.marker.setOpacity(1);
+//             o.route.setStyle({ opacity: 1 });
+//           } else {
+//             o.marker.setOpacity(0);
+//             o.route.setStyle({ opacity: 0 });
+//           }
+//         }
+
+//         else if (filter === "Alert") {
+//           if (o.data.status === "Alert") {
+//             o.marker.setOpacity(1);
+//             o.route.setStyle({ opacity: 1 });
+//           } else {
+//             o.marker.setOpacity(0);
+//             o.route.setStyle({ opacity: 0 });
+//           }
 //         }
 
 //       });
-//     },2000);
 
-//     setTimeout(()=>map.invalidateSize(),500);
+//     }, 2000);
 
-//     return ()=>{
+//     setTimeout(() => map.invalidateSize(), 500);
+
+//     return () => {
 //       clearInterval(interval);
 //       clearInterval(connectionInterval);
 //       map.remove();
-//     }
+//     };
 
-//   },[filter]);
+//   }, []);   // ⚠️ filter removed from dependency
 
-//   // 🎯 click alert zoom
-//   useEffect(()=>{
-//     if(focusCab && markerRefs.current[focusCab.id]){
-//       const m=markerRefs.current[focusCab.id];
-//       mapInstance.current.flyTo(m.getLatLng(),15);
+//   // 🎯 alert click zoom
+//   useEffect(() => {
+//     if (focusCab && markerRefs.current[focusCab.id]) {
+//       const m = markerRefs.current[focusCab.id];
+//       mapInstance.current.flyTo(m.getLatLng(), 15);
 //       m.openPopup();
 //     }
-//   },[focusCab]);
+//   }, [focusCab]);
 
-//   return <div ref={mapRef} style={{height:"100%",width:"100%"}}/>;
+//   return <div ref={mapRef} style={{ height: "100%", width: "100%" }} />;
 // }
 
 // export default MapComponent;
@@ -379,7 +609,7 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
   const mapRef = useRef(null);
   const markerRefs = useRef({});
   const mapInstance = useRef(null);
-  const vehiclesRef = useRef([]);   // ⭐ IMPORTANT: state store (reset nahi hoga)
+  const vehiclesRef = useRef([]); // ⭐ vehicle state store
 
   useEffect(() => {
 
@@ -390,7 +620,7 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
       attribution:"© OpenStreetMap"
     }).addTo(map);
 
-    // 📍 office geofence
+    // 📍 Office geofence
     const office=[28.61,77.20];
     const radius=2000;
 
@@ -411,7 +641,7 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
     const blue=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png",iconSize:[32,32]});
     const red=new L.Icon({iconUrl:"https://maps.google.com/mapfiles/ms/icons/red-dot.png",iconSize:[32,32]});
 
-    // 🚖 5 vehicles (source → office)
+    // 🚖 5 vehicles
     const vehicles=[
       {id:"CAB101",lat:28.50,lng:77.05,status:"Moving"},
       {id:"CAB102",lat:28.72,lng:77.35,status:"Moving"},
@@ -436,7 +666,7 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
       return {data:v,marker,route};
     });
 
-    // connection fake
+    // fake connection
     const connectionInterval=setInterval(()=>{
       if(Math.random()<0.1){
         setConnected(false);
@@ -444,15 +674,14 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
       }
     },5000);
 
-    // 🚀 movement loop (NO RESET)
+    // 🚀 movement loop
     const interval=setInterval(()=>{
 
       objs.forEach(o=>{
 
-        // ⭐ agar office pahuch gaya to ruk jao
+        // ⭐ if reached office stop movement
         if(o.data.status==="Inside Office") return;
 
-        // move toward office
         const step=0.003;
 
         if(o.data.lat < office[0]) o.data.lat+=step;
@@ -465,7 +694,7 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
 
         const d=map.distance([o.data.lat,o.data.lng],office);
 
-        // 🔵 inside office
+        // 🔵 INSIDE OFFICE
         if(d<radius){
 
           o.data.status="Inside Office";
@@ -478,24 +707,29 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
           setTimeout(()=>setToast(null),2500);
 
           setAlerts(prev=>{
-            if(prev.find(a=>a.id===o.data.id && a.msg==="Entered office")) return prev;
-            return [{id:o.data.id,msg:"Entered office"},...prev.slice(0,4)];
+            const exist=prev.find(a=>a.id===o.data.id && a.msg==="Entered office");
+            if(exist) return prev;
+
+            return [{id:o.data.id,msg:"Entered office"},...prev];
           });
         }
 
-        // 🔴 random speeding
-        else if(Math.random()<0.02){
+        // 🔴 SPEEDING
+        else if(Math.random()<0.03){
 
           o.data.status="Alert";
           o.marker.setIcon(red);
           o.marker.setPopupContent(o.data.id+" 🔴 Speeding");
 
           setAlerts(prev=>{
-            if(prev.find(a=>a.id===o.data.id && a.msg==="Speeding")) return prev;
-            return [{id:o.data.id,msg:"Speeding"},...prev.slice(0,4)];
+            const exist=prev.find(a=>a.id===o.data.id && a.msg==="Speeding");
+            if(exist) return prev;
+
+            return [{id:o.data.id,msg:"Speeding"},...prev];
           });
         }
 
+        // 🟢 MOVING
         else{
           o.data.status="Moving";
           o.marker.setIcon(green);
@@ -514,14 +748,10 @@ function MapComponent({ setAlerts, setSelectedCab, setConnected, focusCab, filte
       map.remove();
     };
 
-  },[]); // ⭐ NO filter dependency (reset fix)
+  },[]);
 
-  // 🎯 FILTER SYSTEM (REAL TIME)
+  // 🎯 FILTER SYSTEM (no reset)
   useEffect(()=>{
-
-    Object.values(markerRefs.current).forEach(marker=>{
-      marker.setOpacity(1);
-    });
 
     vehiclesRef.current.forEach(v=>{
       const marker=markerRefs.current[v.id];
